@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" 
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>Esmeralda Lara</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <hr>
+            <h4>Test crud web</h4>
+        <hr>
+        <div class="row">
+            <div class="col-9">
+                <table class="table table-striped table-dark">
+                    <thead>
+                      <tr class="bg-warning">
+                        <th scope="col">#</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">image</th>
+                      </tr>
+                    </thead>
+                    <tbody id="body-table">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-3">
+                <form>
+                    <div class="form-group">
+                      <label for="exampleName">Nombre</label>
+                      <input type="text" class="form-control" id="name">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleJob">Trabajo</label>
+                      <input type="text" class="form-control" id="job">
+                    </div>
+                    <button type="button" class="btn btn-warning" onClick="createPerson()">Registrar</button>
+                  </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let persons = [];
+        var response;
+
+        async function getPersons(){
+            let response = await fetch('https://reqres.in/api/users');
+            response = await response.json();
+            persons = response.data;
+            console.log('response ', response, ' persons ', persons);
+
+            var bodyTable = document.getElementById("body-table");
+
+            for (let i = 0; i < persons.length; i++) {
+                let row = bodyTable.insertRow();
+                let img = document.createElement('img');
+                row.insertCell().innerHTML = i+1;
+                row.insertCell().innerHTML = persons[i]['email'];
+                row.insertCell().innerHTML = persons[i]['first_name'];
+                row.insertCell().innerHTML = persons[i]['last_name'];
+                img.src = persons[i]['avatar'];
+                row.appendChild(img);
+            }
+
+        }
+
+        getPersons();
+
+        async function createPerson(){
+            console.log('---> ', document.getElementById('name').value);
+            let user = {
+                name: document.getElementById('name').value,
+                job: document.getElementById('job').value
+            }
+            let responseCreate = await fetch('https://reqres.in/api/users', {
+                method: 'POST',
+                body: JSON.stringify(user)
+            });
+
+            if( await responseCreate.json()){
+                alert('REGISTRO EXITOSO')
+            }
+
+            console.log('RESPONSE ==> ', await responseCreate.json());
+            response = responseCreate.json()
+
+        }
+
+    </script>
+
+    <script src="./js/app.js" ></script> 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" 
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" 
+        crossorigin="anonymous"></script>
+</body>
+</html>
